@@ -1,13 +1,20 @@
 # API v1 to v2 transition. 
 
 Crucible has moved from assisted installer v1 API to v2. 
-In doing so we have renamed the pod running assisted installer to be inline with assisted installers podman deployment documentation. 
-To allow the transition to take play you will need to remove the v1 assisted installer pod `podman pod rm -f assisted-service`. 
-It may also help to remove anything left behind from the previous pod in the `assisted_installer_dir`(default: `/opt/assisted-installer`). 
-You may want to back this up if you need any infomation the then previous deployments held in assisted installer.
+In doing so we have renamed the pod running assisted installer to be inline
+with assisted installers podman deployment documentation. To allow the
+transition to take play you will need to remove the v1 assisted installer pod
+`podman pod rm -f assisted-service`. It may also help to remove anything left
+behind from the previous pod in the `assisted_installer_dir`(default:
+`/opt/assisted-installer`). You may want to back this up if you need any
+information the then previous deployments held in assisted installer.
 
 In addition to the three previous containers, there is a new image service. 
-For assisted installer to work correctly with this service the assisted installer pod must be able to resolve the image service (by default this will be the `host` var in the `assisted_installer` host definition). So if a domain is being used you will need to add the ip address to your DNS server to the `dns_servers` in the `assisted_installer` host definition:
+For assisted installer to work correctly with this service the assisted
+installer pod must be able to resolve the image service (by default this will
+be the `host` var in the `assisted_installer` host definition). So if a
+domain is being used you will need to add the ip address to your DNS server
+to the `dns_servers` in the `assisted_installer` host definition:
 
 ```yaml
 ...
@@ -26,7 +33,10 @@ services:
 
 ## Overrides
 
-The Assisted Installer has changed the structure of the required data for defining OpenShift versions available to install. If you have overridden the images you will need to split the former data into two parts as follows:
+The Assisted Installer has changed the structure of the required data for
+defining OpenShift versions available to install. If you have overridden the
+images you will need to split the former data into two parts as follows:
+
 ```yaml
 assisted_service_openshift_versions_defaults:
   "4.6":
@@ -60,4 +70,9 @@ assisted_installer_release_images_defaults:
       url: "quay.io/openshift-release-dev/ocp-release{% if 'release_4.6' in image_hashes %}@{{ image_hashes['release_4.6'] }}{% else %}:4.6.16-x86_64{% endif %}"
       version: "4.6.16"
   ...
-``
+```
+
+## Proxy
+
+If you are using a proxy you will need to make HTTP_PROXY, HTTPS_PROXY and
+NO_PROXY all lower case. 
